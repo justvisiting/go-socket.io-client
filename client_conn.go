@@ -40,7 +40,7 @@ type MessageType message.MessageType
 
 const (
 	MessageBinary MessageType = MessageType(message.MessageBinary)
-	MessageText MessageType = MessageType(message.MessageText)
+	MessageText   MessageType = MessageType(message.MessageText)
 )
 
 type state int
@@ -83,13 +83,13 @@ func newClientConn(opts *Options, u *url.URL) (client *clientConn, err error) {
 	}
 
 	client = &clientConn{
-		url:           u,
-		options:       opts,
-		state:         stateNormal,
-		pingTimeout:   60000 * time.Millisecond,
-		pingInterval:  25000 * time.Millisecond,
-		pingChan:      make(chan bool),
-		readerChan:    make(chan *connReader),
+		url:          u,
+		options:      opts,
+		state:        stateNormal,
+		pingTimeout:  60000 * time.Millisecond,
+		pingInterval: 25000 * time.Millisecond,
+		pingChan:     make(chan bool),
+		readerChan:   make(chan *connReader),
 	}
 
 	err = client.onOpen()
@@ -268,7 +268,7 @@ func (c *clientConn) onOpen() error {
 	q := c.request.URL.Query()
 	q.Set("transport", "polling")
 	c.request.URL.RawQuery = q.Encode()
-	if (c.options.Header != nil) {
+	if c.options.Header != nil {
 		c.request.Header = c.options.Header
 	}
 
@@ -348,7 +348,13 @@ func (c *clientConn) onOpen() error {
 		} else {
 			c.request.URL.Scheme = "ws"
 		}
-		q.Set("sid", c.id)
+
+		//had to remove sid to make it work with xts
+		q.Del("sid")
+		//q.Set("sid", c.id)
+		//had to add eio explicitly
+		q.Set("EIO", "3")
+
 		q.Set("transport", "websocket")
 		c.request.URL.RawQuery = q.Encode()
 
