@@ -1,6 +1,6 @@
 module github.com/zhouhui8915/go-socket.io-client
 
-go 1.21.0
+go 1.21
 
 require github.com/zhouhui8915/engine.io-go v0.0.0-20150910083302-02ea08f0971f
 
